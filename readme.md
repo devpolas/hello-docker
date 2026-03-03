@@ -1,32 +1,68 @@
+Your commands are **correct**, but the explanation around `--network=host` can be clearer and more accurate for documentation readers. Below is a **cleaned-up, production-ready version** of your Docker CMD section with **why** and **when** to use the network flag.
+
+---
+
 # Docker CMD
 
-### Build docker image with tag name
+## Build Docker image with a tag
 
 ```sh
-docker build -t express-server:latest . # build image name is express-server:latest
+docker build -t express-server:latest .
 ```
 
-_if any issue create or build docker image run this cmd_
+This builds the image using Docker’s **default bridge network**.
+
+---
+
+## Build Docker image with host network (if build gets stuck)
 
 ```sh
-docker build -t express-server:latest --network host . # build image name is express-server:latest
+docker build -t express-server:latest --network=host .
 ```
 
-`or`
+### Why this is needed sometimes
+
+During `docker build`, commands like `npm install` require internet access.
+On some systems (especially **Alpine-based images** or DNS/IPv6 setups), Docker’s default bridge network may cause:
+
+- DNS resolution issues
+- TLS handshake hangs
+- `npm install` freezing without errors
+
+Using `--network=host` makes the build container use the **host’s network stack**, fixing those issues.
+
+> ⚠️ **Important**
+>
+> - This affects **build-time only**
+> - The final image **does NOT use host networking**
+> - Safe for local development and CI
+> - Not recommended for untrusted build environments
+
+This behavior is related to how Docker isolates networking during image builds.
+
+---
+
+## Run Docker container (detached, auto-remove, port exposed)
 
 ```sh
-docker build -t express-server:latest --network=host . # build image name is express-server:latest
+docker run --rm --name node-server -d -p 8080:8080 express-server:latest
 ```
 
-### Run docker images with detach mode with expose port and delete after stop container
+### Flags explained
 
-```sh
-docker run --rm --name node-server -d -p 8080:8080 express-server:latest # container name is node-server
-```
+- `--rm` → remove container after it stops
+- `--name node-server` → custom container name
+- `-d` → detached mode (runs in background)
+- `-p 8080:8080` → map host port → container port
 
-### Visit [localhost:8080](http://localhost:8080/) for server response
+---
 
-_output_
+## Access the server
+
+Visit:
+👉 [http://localhost:8080](http://localhost:8080)
+
+### Expected output
 
 ```json
 {
@@ -34,20 +70,38 @@ _output_
 }
 ```
 
-### Check docker running container
+---
+
+## Check running containers
 
 ```sh
 docker ps
 ```
 
-### Check all docker running container
+## Check all containers (running + stopped)
 
 ```sh
 docker ps -a
 ```
 
-### Stop docker container
+---
+
+## Stop the container
 
 ```sh
-docker stop node-server # your container name
+docker stop node-server
 ```
+
+---
+
+## Best practice note (recommended for your setup)
+
+If you want to **avoid `--network=host` completely**, use a Debian-based Node image instead of Alpine:
+
+```Dockerfile
+FROM node:24-bookworm
+```
+
+This solves most DNS/npm issues on Debian 13 systems like yours.
+
+---
