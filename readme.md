@@ -1,4 +1,3 @@
----
 # Docker CMD
 
 ## Build Docker image with a tag
