@@ -3,19 +3,19 @@
 ### Build docker image with tag name
 
 ```sh
-docker build -t express-server:latest .
+docker build -t express-server:latest . # build image name is express-server:latest
 ```
 
 _if any issue create or build docker image run this cmd_
 
 ```sh
-docker build -t express-server:latest --network host .
+docker build -t express-server:latest --network host . # build image name is express-server:latest
 ```
 
 `or`
 
 ```sh
-docker build -t express-server:latest --network=host .
+docker build -t express-server:latest --network=host . # build image name is express-server:latest
 ```
 
 ### Run docker images with detach mode with expose port and delete after stop container
