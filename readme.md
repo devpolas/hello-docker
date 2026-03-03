@@ -90,15 +90,3 @@ docker stop node-server
 ```
 
 ---
-
-## Best practice note (recommended for your setup)
-
-If you want to **avoid `--network=host` completely**, use a Debian-based Node image instead of Alpine:
-
-```Dockerfile
-FROM node:24-bookworm
-```
-
-This solves most DNS/npm issues on Debian 13 systems like yours.
-
----
