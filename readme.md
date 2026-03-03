@@ -1,7 +1,4 @@
-Your commands are **correct**, but the explanation around `--network=host` can be clearer and more accurate for documentation readers. Below is a **cleaned-up, production-ready version** of your Docker CMD section with **why** and **when** to use the network flag.
-
 ---
-
 # Docker CMD
 
 ## Build Docker image with a tag
